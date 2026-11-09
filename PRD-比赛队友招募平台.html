@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>比赛队友招募平台 · 需求文档（PRD）</title>
+<style>
+  :root{
+    --ink:#1a2233; --sub:#5a6478; --line:#e3e7ef; --bg:#f6f8fb;
+    --brand:#2f6fed; --brand-soft:#eaf1fe; --ok:#1a9e6c; --ok-soft:#e6f6ef;
+    --warn:#c77700; --warn-soft:#fdf3e2; --err:#d64545; --err-soft:#fdeeec;
+    --tag-a:#2f6fed; --tag-b:#8a4fd3; --card:#ffffff;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.7;font-size:15px;}
+  .page{max-width:1000px;margin:0 auto;padding:32px 20px 80px;}
+  header.doc{background:linear-gradient(135deg,#20315e,#2f6fed);color:#fff;
+    border-radius:14px;padding:34px 36px;margin-bottom:28px;}
+  header.doc h1{margin:0 0 10px;font-size:26px;letter-spacing:1px;}
+  header.doc .meta{display:flex;flex-wrap:wrap;gap:10px;font-size:13px;}
+  header.doc .meta span{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);
+    padding:3px 12px;border-radius:999px;}
+  h2{font-size:20px;margin:38px 0 14px;padding-left:12px;border-left:4px solid var(--brand);}
+  h3{font-size:16px;margin:24px 0 10px;}
+  p{margin:8px 0;}
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:22px 26px;margin-bottom:16px;}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px;background:#fff;}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;}
+  th{background:#f0f4fa;font-weight:600;white-space:nowrap;}
+  code{background:#eef1f7;border-radius:4px;padding:1px 6px;font-size:13px;}
+  .tag{display:inline-block;padding:1px 10px;border-radius:999px;font-size:12px;font-weight:600;}
+  .tag.p0{background:var(--err-soft);color:var(--err);}
+  .tag.p1{background:var(--warn-soft);color:var(--warn);}
+  .tag.out{background:#eceff4;color:var(--sub);}
+  .tag.type-a{background:var(--brand-soft);color:var(--tag-a);}
+  .tag.type-b{background:#f3ecfd;color:var(--tag-b);}
+  .tag.st-open{background:var(--ok-soft);color:var(--ok);}
+  .tag.st-full{background:#eceff4;color:var(--sub);}
+  .tag.st-down{background:var(--err-soft);color:var(--err);}
+  .tag.st-ban{background:var(--err-soft);color:var(--err);}
+  .assume{background:var(--warn-soft);border-left:3px solid var(--warn);
+    padding:8px 12px;border-radius:6px;margin:10px 0;font-size:14px;}
+  .flow{background:#f0f4fa;border:1px dashed #b9c8e8;border-radius:10px;
+    padding:14px 18px;font-size:14px;margin:12px 0;}
+  .flow b{color:var(--brand);}
+  /* ---- demo ---- */
+  .demo{border:2px dashed #b9c8e8;border-radius:12px;background:#fbfcff;
+    padding:18px 20px;margin:16px 0;}
+  .demo .demo-title{font-size:13px;font-weight:700;color:var(--brand);
+    letter-spacing:1px;margin-bottom:10px;}
+  .demo .phone{max-width:430px;margin:0 auto;background:#fff;border:1px solid var(--line);
+    border-radius:12px;padding:18px;box-shadow:0 2px 10px rgba(32,49,94,.06);}
+  .demo label{display:block;font-size:13px;color:var(--sub);margin:10px 0 4px;}
+  .demo input,.demo textarea,.demo select{width:100%;border:1px solid #cdd6e4;border-radius:8px;
+    padding:8px 10px;font-size:14px;font-family:inherit;background:#fff;}
+  .demo input:focus,.demo textarea:focus{outline:2px solid var(--brand-soft);border-color:var(--brand);}
+  .demo .btn{display:inline-block;border:none;border-radius:8px;padding:8px 18px;
+    font-size:14px;cursor:pointer;background:var(--brand);color:#fff;margin-top:12px;}
+  .demo .btn.ghost{background:#fff;color:var(--brand);border:1px solid var(--brand);}
+  .demo .btn.danger{background:var(--err);}
+  .demo .btn.small{padding:3px 12px;font-size:12px;margin:0;}
+  .demo .tabs{display:flex;gap:8px;margin:8px 0 12px;flex-wrap:wrap;}
+  .demo .tabs button{border:1px solid #cdd6e4;background:#fff;border-radius:999px;
+    padding:5px 16px;font-size:13px;cursor:pointer;}
+  .demo .tabs button.active{background:var(--brand);border-color:var(--brand);color:#fff;}
+  .msg{border-radius:8px;padding:8px 12px;font-size:13px;margin-top:10px;display:none;}
+  .msg.ok{display:block;background:var(--ok-soft);color:var(--ok);}
+  .msg.err{display:block;background:var(--err-soft);color:var(--err);}
+  .post-item{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:10px;
+    cursor:pointer;background:#fff;}
+  .post-item:hover{border-color:var(--brand);}
+  .post-item .t{font-weight:600;}
+  .post-item .d{font-size:12px;color:var(--sub);margin-top:4px;}
+  .detail-box{background:#f6f8fb;border-radius:8px;padding:10px 12px;font-size:13px;
+    margin-top:8px;display:none;}
+  .kv{display:flex;gap:8px;margin:3px 0;}
+  .kv .k{color:var(--sub);width:72px;flex:none;}
+  .admin-table td{font-size:13px;}
+  .note{font-size:12px;color:var(--sub);}
+  footer{margin-top:40px;color:var(--sub);font-size:12px;text-align:center;}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="doc">
+  <h1>比赛队友招募平台 · 产品需求文档（PRD）</h1>
+  <div class="meta">
+    <span>版本 v1.3</span><span>日期 2026-11-09</span>
+    <span>状态：已交付</span><span>工程约束：前端 Vue3 / 后端 FastAPI</span>
+  </div>
+</header>
+
+<section class="card" style="border-left:4px solid var(--brand)">
+  <b>v1.1 修订说明（2026-11-09，依据评审反馈与招聘类网站对标）</b>
+  <p style="margin:6px 0 0">① <b>联系方式仅登录用户可见</b>，游客展示遮罩并引导登录（评审意见）。<br>
+  ② 借鉴招聘网站通行做法：关键词搜索（赛事名称+描述）、类型筛选与搜索组合生效、相对时间展示（3 小时前 / 2 天前）、帖子 30 天有效期、登录门槛后自动返回原页、移动端适配。<br>
+  ③ 新增联系方式一键复制（评审反馈）。</p>
+</section>
+
+<section class="card" style="border-left:4px solid var(--ok)">
+  <b>v1.2 更新说明（2026-11-09）</b>
+  <p style="margin:6px 0 0">实现原 P1 项并整体美化 UI：新增帖子收藏（“我的收藏”页，规则见 7.5）、浏览量统计（列表/详情/后台）、24 小时内“新”帖标识；视觉升级（渐变主视觉、卡片动效、图标、移动端优化）。</p>
+</section>
+
+<section class="card" style="border-left:4px solid var(--ok)">
+  <b>v1.3 更新说明（2026-11-09）</b>
+  <p style="margin:6px 0 0">发布表单的联系方式改为“类型下拉 + 号码输入”：先选微信 / QQ / 手机号，再填写对应号码，避免浏览者不知道该加哪个；详情页明确标注联系方式类型（如“微信 · 登录用户可见”），后台列表同步展示类型。</p>
+</section>
+
+<!-- 1 背景与目标 -->
+<section class="card">
+  <h2 style="margin-top:0">1. 背景与目标</h2>
+  <p>学生参加学科竞赛、创新创业比赛时，常常面临两个问题：自己想参赛但凑不齐队伍；已有队伍但缺少特定方向的成员。目前主要靠班级群、朋友圈零散传播，信息沉得快、覆盖窄，且无法区分“找队友”和“找队伍”两类诉求。</p>
+  <p>本平台提供一个集中的招募信息板：学生用学号和姓名注册后，可以发布“找队友”或“找队伍”的招募帖并留下联系方式，也可以浏览他人的招募帖，通过帖子中留存的联系方式自行线下联系，完成组队。</p>
+  <p><b>可观察的完成标准</b>：用户从注册到成功发布一条带联系方式的招募帖，全程无需他人协助；其他用户无需询问即可在列表中找到该帖并看到联系方式。</p>
+  <p>同时提供<b>管理平台</b>，供管理员维护用户与帖子秩序（停用违规用户、下架违规帖子），保证信息板可持续使用。</p>
+</section>
+
+<!-- 2 范围 -->
+<section class="card">
+  <h2 style="margin-top:0">2. 产品范围</h2>
+  <table>
+    <tr><th style="width:90px">优先级</th><th>内容</th></tr>
+    <tr>
+      <td><span class="tag p0">P0</span></td>
+      <td>
+        用户端：学号+姓名注册登录；发布“找队友/找队伍”招募帖（必留联系方式）；浏览与筛选帖子列表、关键词搜索；查看帖子详情（联系方式仅登录可见）；管理本人帖子（关闭、删除）。<br>
+        管理平台：管理员账号登录；数据概览；用户管理（查询、停用/启用）；帖子管理（筛选、搜索、下架）。
+      </td>
+    </tr>
+    <tr>
+      <td><span class="tag p1">P1 已实现</span></td>
+      <td>帖子收藏、浏览量统计——已在 v1.2 实现（规则见 7.5）。</td>
+    </tr>
+    <tr>
+      <td><span class="tag out">暂不做</span></td>
+      <td>站内私信/聊天（联系通过帖子中留存的联系方式线下完成）；招募信息的发布审核（先发布后管理，违规由管理员下架）；简历/技能标签匹配；文件与图片上传。</td>
+    </tr>
+  </table>
+</section>
+
+<!-- 3 角色与数据模型 -->
+<section class="card">
+  <h2 style="margin-top:0">3. 角色与数据模型</h2>
+  <h3>3.1 角色</h3>
+  <table>
+    <tr><th>角色</th><th>说明</th><th>进入方式</th></tr>
+    <tr><td>游客</td><td>未登录访问者</td><td>直接访问，仅可浏览帖子</td></tr>
+    <tr><td>注册用户</td><td>以学号+姓名注册的学生</td><td>注册后可发布与管理本人帖子</td></tr>
+    <tr><td>管理员</td><td>平台运营维护人员</td><td>使用预置管理员账号登录管理平台</td></tr>
+  </table>
+  <h3>3.2 核心对象</h3>
+  <table>
+    <tr><th>对象</th><th>字段</th><th>规则</th></tr>
+    <tr>
+      <td>用户</td>
+      <td>学号、姓名、注册时间、账号状态</td>
+      <td>学号全局唯一；账号状态：正常 / 停用</td>
+    </tr>
+    <tr>
+      <td>招募帖</td>
+      <td>类型（找队友/找队伍）、赛事名称、描述、需求人数、联系方式、发布者姓名、发布时间、状态</td>
+      <td>类型、赛事名称、描述、联系方式为必填；联系方式以明文展示；帖子状态见 3.3</td>
+    </tr>
+  </table>
+  <h3>3.3 帖子状态机</h3>
+  <table>
+    <tr><th>状态</th><th>含义</th><th>可转换到</th><th>触发者</th></tr>
+    <tr><td><span class="tag st-open">招募中</span></td><td>正常展示，可被联系</td><td>已招满、已下架、删除</td><td>发布者 / 管理员</td></tr>
+    <tr><td><span class="tag st-full">已招满</span></td><td>发布者确认组队完成，仍展示但提示已满</td><td>已下架、删除</td><td>发布者 / 管理员</td></tr>
+    <tr><td><span class="tag st-down">已下架</span></td><td>管理员下架，前台列表与详情不可见；发布者在“我的发布”中可见该状态</td><td>—（终态）</td><td>管理员</td></tr>
+  </table>
+  <p class="note">删除：发布者可删除本人“招募中/已招满”的帖子，删除后数据移除、不可恢复。过期：发布超过 30 天的帖子自动视为“已过期”（读取时计算，规则见 7.4）。</p>
+</section>
+
+<!-- 4 核心流程 -->
+<section class="card">
+  <h2 style="margin-top:0">4. 核心流程</h2>
+  <div class="flow">
+    <b>发布方</b>：注册（学号+姓名）→ 登录 → 填写招募帖（选类型、赛事、描述、联系方式）→ 提交成功 → 帖子进入列表（招募中）→ 组队完成后关闭（已招满）或删除。<br><br>
+    <b>寻找方</b>：进入平台 → 浏览/筛选帖子列表（可先不登录）→ 点开详情查看联系方式 → 通过联系方式线下联系 → 达成组队。<br><br>
+    <b>管理员</b>：登录管理平台 → 查看数据概览 → 按需处理用户（停用/启用）或帖子（下架）。
+  </div>
+</section>
+
+<!-- 5 用户端功能需求 -->
+<section class="card">
+  <h2 style="margin-top:0">5. 功能需求 · 用户端</h2>
+
+  <h3>FR-01 注册与登录 <span class="tag p0">P0</span></h3>
+  <p><b>目的</b>：以最低门槛建立可信的校内身份（学号唯一），支撑发布与帖子归属。</p>
+  <table>
+    <tr><th style="width:110px">字段</th><th>规则</th></tr>
+    <tr><td>学号</td><td>必填，全局唯一，5–20 位数字或字母组合</td></tr>
+    <tr><td>姓名</td><td>必填，2–20 个字符</td></tr>
+  </table>
+  <p><b>处理规则</b>：</p>
+  <p>① 注册：校验格式 → 校验学号未被注册 → 创建账号并自动登录；学号已存在时提示“该学号已注册”。<br>
+  ② 登录：输入学号+姓名，与已有账号完全匹配则登录成功；否则提示“学号或姓名不正确”（不区分具体原因）。<br>
+  ③ 登录后保持会话，刷新页面不掉线；可主动退出登录。</p>
+  <div class="assume">[假设，待确认] 登录不设密码，凭“学号+姓名”匹配即可（校园轻量场景）。如需密码或验证码，请在评审时提出。</div>
+  <div class="assume">[假设，待确认] 被停用的用户尝试登录时提示“账号已被停用，请联系管理员”。</div>
+  <div class="demo">
+    <div class="demo-title">交互演示 · FR-01（预置账号：20230001 / 张三）</div>
+    <div class="phone">
+      <div class="tabs">
+        <button id="d1-tab-reg" class="active" onclick="d1switch('reg')">注册</button>
+        <button id="d1-tab-login" onclick="d1switch('login')">登录</button>
+      </div>
+      <div id="d1-reg">
+        <label>学号</label><input id="d1-reg-sid" placeholder="如 20240123">
+        <label>姓名</label><input id="d1-reg-name" placeholder="真实姓名">
+        <button class="btn" onclick="d1register()">注册</button>
+      </div>
+      <div id="d1-login" style="display:none">
+        <label>学号</label><input id="d1-login-sid" placeholder="已注册的学号">
+        <label>姓名</label><input id="d1-login-name" placeholder="注册时填写的姓名">
+        <button class="btn" onclick="d1login()">登录</button>
+      </div>
+      <div id="d1-msg" class="msg"></div>
+    </div>
+  </div>
+
+  <h3>FR-02 发布招募帖 <span class="tag p0">P0</span></h3>
+  <p><b>目的</b>：让注册用户快速发布一条可被联系的招募信息。</p>
+  <p><b>触发条件</b>：已登录用户点击“发布招募”。</p>
+  <table>
+    <tr><th style="width:110px">字段</th><th>必填</th><th>规则</th></tr>
+    <tr><td>类型</td><td>是</td><td>单选：找队友（我组队缺人）/ 找队伍（我想加入队伍）</td></tr>
+    <tr><td>赛事名称</td><td>是</td><td>2–50 字符，如“全国大学生数学建模竞赛”</td></tr>
+    <tr><td>描述</td><td>是</td><td>10–500 字符，说明需求、要求、时间安排等</td></tr>
+    <tr><td>需求人数</td><td>否</td><td>1–99 的整数，默认不填（“找队伍”类型可不填）</td></tr>
+    <tr><td>联系方式</td><td>是</td><td>先选择类型（微信 / QQ / 手机号），再填写对应号码：QQ 为 5–12 位数字，手机号为 11 位（1 开头），微信号为 5–100 字符；仅登录用户可见</td></tr>
+  </table>
+  <p><b>处理规则</b>：提交时逐项校验，不通过则在对应字段下提示；通过后帖子以“招募中”状态入库，发布者自动署名（姓名），跳转/提示发布成功。</p>
+  <p><b>异常</b>：未登录访问发布页时引导先登录；被停用用户提交时提示“账号已被停用，无法发布”。</p>
+  <div class="demo">
+    <div class="demo-title">交互演示 · FR-02（试试空表单直接提交，查看校验）</div>
+    <div class="phone">
+      <label>类型</label>
+      <div class="tabs" style="margin:0">
+        <button id="d2-type-a" class="active" onclick="d2type('a')">找队友</button>
+        <button id="d2-type-b" onclick="d2type('b')">找队伍</button>
+      </div>
+      <label>赛事名称</label><input id="d2-contest" placeholder="如：全国大学生数学建模竞赛">
+      <label>描述（10–500 字）</label><textarea id="d2-desc" rows="3" placeholder="希望找一名会 Python 的同学，负责数据处理…"></textarea>
+      <label>需求人数（选填）</label><input id="d2-num" placeholder="1–99">
+      <label>联系方式（必填，将公开展示）</label><input id="d2-contact" placeholder="微信号 / QQ / 手机号">
+      <button class="btn" onclick="d2submit()">发布</button>
+      <div id="d2-msg" class="msg"></div>
+    </div>
+  </div>
+
+  <h3>FR-03 浏览与搜索帖子列表 <span class="tag p0">P0</span></h3>
+  <p><b>目的</b>：让寻找方快速找到匹配的招募信息（参照招聘网站职位列表页“筛选 + 搜索”模式）。</p>
+  <p><b>处理规则</b>：</p>
+  <p>① 列表默认展示全部“招募中/已招满”帖子，按发布时间倒序；“已下架”“已过期”帖子不展示。<br>
+  ② 顶部筛选：全部 / 找队友 / 找队伍；与搜索框可同时生效（AND 组合）。<br>
+  ③ 搜索框：按关键词对“赛事名称 + 描述”做 OR 匹配。<br>
+  ④ 列表项展示：类型标签、赛事名称、描述摘要（前 40 字）、发布者姓名、相对发布时间（24 小时内显示“X 分钟前 / X 小时前”，超过则显示日期）、状态。<br>
+  ⑤ 无数据时展示空状态文案：“暂无招募信息，来发布第一条吧”。<br>
+  ⑥ 页面适配移动端（响应式布局）。</p>
+  <div class="assume">[已确认] 游客可浏览列表与详情，但不可查看联系方式、不可发布（见 FR-04）。</div>
+
+  <h3>FR-04 帖子详情与联系 <span class="tag p0">P0</span></h3>
+  <p><b>处理规则</b>：</p>
+  <p>① 点击列表项进入详情，展示全部字段。<br>
+  ② <b>联系方式仅登录用户可见</b>：游客看到遮罩占位与“登录后可查看联系方式”按钮；点击跳转登录，登录成功后自动返回当前详情页并展示联系方式（参照招聘网站“登录后可投递/查看”的门槛模式）。<br>
+  ③ “已招满”帖子在详情顶部提示“该招募已完成，仅供参考”。<br>
+  ④ 平台不提供站内聊天，联系在线下完成。<br>
+  ⑤ 一键复制：联系方式旁提供“复制”按钮，点击后写入剪贴板并提示“已复制到剪贴板”（参照招聘网站复制联系方式的通用交互）。<br>
+  ⑥ 类型标识：详情页联系方式标题明确标注类型（如“联系方式（微信 · 登录用户可见）”），游客遮罩区同样提示类型，避免不知道该加哪个。</p>
+  <div class="demo">
+    <div class="demo-title">交互演示 · FR-03 / FR-04（点击帖子展开详情；点右侧按钮切换身份，体验联系方式遮罩）</div>
+    <div class="phone">
+      <div class="tabs">
+        <button id="d3-f-all" class="active" onclick="d3filter('all')">全部</button>
+        <button id="d3-f-a" onclick="d3filter('a')">找队友</button>
+        <button id="d3-f-b" onclick="d3filter('b')">找队伍</button>
+        <button id="d3-role" style="margin-left:auto" onclick="d3toggleRole()">当前身份：游客</button>
+      </div>
+      <div id="d3-list"></div>
+      <div id="d3-msg" class="msg"></div>
+    </div>
+  </div>
+
+  <h3>FR-05 我的发布 <span class="tag p0">P0</span></h3>
+  <p><b>目的</b>：发布者管理自己帖子的生命周期。</p>
+  <p><b>处理规则</b>：</p>
+  <p>① “我的发布”仅展示当前用户本人的帖子（含“已下架”状态，便于知晓处理结果）。<br>
+  ② 关闭招募：仅“招募中”可操作，确认后状态变为“已招满”。<br>
+  ③ 删除：需二次确认，文案“删除后不可恢复，确认删除？”；确认后帖子移除。<br>
+  ④ 被下架的帖子不可再操作，仅展示“已下架”状态。<br>
+  ⑤ 超过有效期的帖子展示“已过期”状态，不可再操作（规则见 7.4）。</p>
+</section>
+
+<!-- 6 管理平台功能需求 -->
+<section class="card">
+  <h2 style="margin-top:0">6. 功能需求 · 管理平台</h2>
+
+  <h3>FR-06 管理员登录 <span class="tag p0">P0</span></h3>
+  <p>管理员使用账号+密码登录独立的后台入口；登录成功后进入数据概览页，未登录访问任何后台页面均跳转登录页。</p>
+  <div class="assume">[假设，待确认] 系统预置一个管理员账号（如 admin / admin123），首期不做多管理员与权限分级。</div>
+
+  <h3>FR-07 数据概览 <span class="tag p0">P0</span></h3>
+  <p>展示平台核心计数，辅助管理员掌握运行情况：注册用户数、帖子总数、“找队友”帖数、“找队伍”帖数、“招募中”帖数。</p>
+
+  <h3>FR-08 用户管理 <span class="tag p0">P0</span></h3>
+  <p><b>目的</b>：处置冒用学号、发布违规内容等异常用户。</p>
+  <p><b>处理规则</b>：</p>
+  <p>① 用户列表：学号、姓名、注册时间、发布帖数、账号状态；支持按学号/姓名搜索。<br>
+  ② 停用：二次确认后账号变为“停用”。被停用用户无法登录、无法发布；其已发布的帖子<b>保持展示</b>（帖子本身无违规时），如需移除走帖子管理下架。<br>
+  ③ 启用：恢复为正常，用户可重新登录。</p>
+  <div class="demo">
+    <div class="demo-title">交互演示 · FR-08（试试停用 / 启用）</div>
+    <div class="phone" style="max-width:100%">
+      <table class="admin-table">
+        <tr><th>学号</th><th>姓名</th><th>发帖数</th><th>状态</th><th>操作</th></tr>
+        <tbody id="d4-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <h3>FR-09 帖子管理 <span class="tag p0">P0</span></h3>
+  <p><b>目的</b>：下架虚假、违规或重复的招募帖。</p>
+  <p><b>处理规则</b>：</p>
+  <p>① 帖子列表：类型、赛事名称、发布者姓名、发布时间、状态；支持按类型/状态筛选，按赛事名称关键词搜索（覆盖 P1 搜索能力）。<br>
+  ② 下架：仅“招募中/已招满”可操作；二次确认后状态变为“已下架”，前台列表与详情立即不可见；发布者在“我的发布”中可见“已下架”。<br>
+  ③ 已下架为终态，不提供恢复上架（如需恢复，由用户重新发布）。</p>
+  <div class="demo">
+    <div class="demo-title">交互演示 · FR-09（试试筛选与下架）</div>
+    <div class="phone" style="max-width:100%">
+      <div class="tabs">
+        <button id="d5-f-all" class="active" onclick="d5filter('all')">全部</button>
+        <button id="d5-f-a" onclick="d5filter('a')">找队友</button>
+        <button id="d5-f-b" onclick="d5filter('b')">找队伍</button>
+      </div>
+      <table class="admin-table">
+        <tr><th>类型</th><th>赛事名称</th><th>发布者</th><th>状态</th><th>操作</th></tr>
+        <tbody id="d5-body"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 7 公共规则 -->
+<section class="card">
+  <h2 style="margin-top:0">7. 公共规则与权限</h2>
+  <h3>7.1 权限矩阵</h3>
+  <table>
+    <tr><th>操作</th><th>游客</th><th>注册用户</th><th>管理员</th></tr>
+    <tr><td>浏览帖子列表 / 详情</td><td>✔</td><td>✔</td><td>—（在后台帖子管理中查看）</td></tr>
+    <tr><td>查看联系方式</td><td>✘（遮罩展示，引导登录）</td><td>✔</td><td>✔（后台可见）</td></tr>
+    <tr><td>发布招募帖</td><td>✘（引导登录）</td><td>✔（账号正常时）</td><td>—</td></tr>
+    <tr><td>关闭 / 删除帖子</td><td>✘</td><td>✔（仅本人帖子）</td><td>—</td></tr>
+    <tr><td>下架帖子</td><td>✘</td><td>✘</td><td>✔</td></tr>
+    <tr><td>停用 / 启用用户</td><td>✘</td><td>✘</td><td>✔</td></tr>
+  </table>
+  <h3>7.2 通用校验与反馈</h3>
+  <table>
+    <tr><th>场景</th><th>行为</th></tr>
+    <tr><td>表单校验失败</td><td>阻断提交，在对应字段下给出具体原因（如“联系方式为必填项”）</td></tr>
+    <tr><td>破坏性操作（删除帖子、停用用户、下架帖子）</td><td>必须二次确认，文案说明不可恢复/影响范围</td></tr>
+    <tr><td>接口异常 / 网络失败</td><td>全局提示“操作失败，请稍后重试”，不丢失用户已填写内容</td></tr>
+    <tr><td>列表为空</td><td>展示空状态文案，发布入口场景附“去发布”引导</td></tr>
+  </table>
+  <h3>7.3 隐私与安全说明</h3>
+  <p>① 联系方式为发布者自愿提供，<b>仅对登录用户明文展示</b>，降低游客与爬虫抓取带来的隐私风险；发布表单需明示“登录用户可见”。<br>
+  ② 学号不对外展示：列表与详情仅展示发布者姓名，学号仅用于账号唯一性与后台管理。<br>
+  ③ 管理员账号密码需加密存储（具体方案属技术设计范畴）。</p>
+  <h3>7.4 帖子有效期</h3>
+  <p>帖子自发布起 30 天内有效（读取时计算，无需定时任务）：超过 30 天自动视为“已过期”——前台默认列表不展示；发布者“我的发布”与管理平台帖子管理中展示“已过期”状态；过期帖子不可再操作。目的是保持信息板时效性，参照招聘网站职位有效期机制。</p>
+  <h3>7.5 收藏与浏览量（v1.2 新增）</h3>
+  <p>① 收藏：登录用户可在列表卡片、详情页收藏/取消收藏，状态实时同步；“我的收藏”页按收藏时间倒序展示仍然可见的帖子（已下架/已过期的自动不展示）。游客点击收藏时引导登录。<br>
+  ② 浏览量：帖子详情每被打开一次计数加 1，在列表、详情页与管理平台帖子管理中展示，用于反映招募热度。</p>
+</section>
+
+<!-- 8 开放问题 -->
+<section class="card">
+  <h2 style="margin-top:0">8. 开放问题（待评审确认）</h2>
+  <table>
+    <tr><th style="width:60px">编号</th><th>问题</th><th>当前假设</th></tr>
+    <tr><td>Q1</td><td>登录是否需要密码？</td><td>不设密码，学号+姓名匹配即登录</td></tr>
+    <tr><td>Q2</td><td><s>游客是否可浏览帖子？</s> 已确认：游客可浏览列表与详情，<b>联系方式仅登录可见</b></td><td>—</td></tr>
+    <tr><td>Q3</td><td>管理员账号来源？</td><td>预置单账号（admin），不做多管理员</td></tr>
+    <tr><td>Q4</td><td>停用用户后其历史帖子如何处理？</td><td>保持展示，必要时由管理员单独下架</td></tr>
+  </table>
+  <p class="note">以上假设已随评审通过确认（2026-11-09），开发将按“当前假设”列实施。</p>
+</section>
+
+<footer>比赛队友招募平台 PRD · v1.2 · 已交付</footer>
+</div>
+
+<script>
+/* ---------- Demo 1: 注册/登录 ---------- */
+var d1users=[{sid:'20230001',name:'张三'}];
+function d1switch(t){
+  document.getElementById('d1-reg').style.display=t==='reg'?'block':'none';
+  document.getElementById('d1-login').style.display=t==='login'?'block':'none';
+  document.getElementById('d1-tab-reg').className=t==='reg'?'active':'';
+  document.getElementById('d1-tab-login').className=t==='login'?'active':'';
+  d1msg('','');
+}
+function d1msg(type,text){
+  var m=document.getElementById('d1-msg');
+  m.className='msg'+(type?' '+type:'');
+  m.textContent=text;
+}
+function d1register(){
+  var sid=document.getElementById('d1-reg-sid').value.trim();
+  var name=document.getElementById('d1-reg-name').value.trim();
+  if(!/^[A-Za-z0-9]{5,20}$/.test(sid)) return d1msg('err','学号需为 5–20 位数字或字母');
+  if(name.length<2||name.length>20) return d1msg('err','姓名需为 2–20 个字符');
+  if(d1users.some(function(u){return u.sid===sid;})) return d1msg('err','该学号已注册');
+  d1users.push({sid:sid,name:name});
+  d1msg('ok','注册成功，已自动登录（欢迎，'+name+'）');
+}
+function d1login(){
+  var sid=document.getElementById('d1-login-sid').value.trim();
+  var name=document.getElementById('d1-login-name').value.trim();
+  var hit=d1users.some(function(u){return u.sid===sid&&u.name===name;});
+  if(hit) d1msg('ok','登录成功');
+  else d1msg('err','学号或姓名不正确');
+}
+/* ---------- Demo 2: 发布 ---------- */
+var d2t='a';
+function d2type(t){
+  d2t=t;
+  document.getElementById('d2-type-a').className=t==='a'?'active':'';
+  document.getElementById('d2-type-b').className=t==='b'?'active':'';
+}
+function d2submit(){
+  var c=document.getElementById('d2-contest').value.trim();
+  var d=document.getElementById('d2-desc').value.trim();
+  var n=document.getElementById('d2-num').value.trim();
+  var k=document.getElementById('d2-contact').value.trim();
+  var errs=[];
+  if(c.length<2||c.length>50) errs.push('赛事名称需为 2–50 字符');
+  if(d.length<10||d.length>500) errs.push('描述需为 10–500 字符');
+  if(n&&(!/^\d+$/.test(n)||+n<1||+n>99)) errs.push('需求人数需为 1–99 的整数');
+  if(k.length<5||k.length>100) errs.push('联系方式为必填项（5–100 字符）');
+  var m=document.getElementById('d2-msg');
+  if(errs.length){m.className='msg err';m.innerHTML=errs.join('<br>');}
+  else{m.className='msg ok';m.textContent='发布成功！帖子已进入列表（状态：招募中，署名：'+d1users[0].name+'）';}
+}
+/* ---------- Demo 3: 列表/详情 ---------- */
+var d3posts=[
+  {type:'a',title:'全国大学生数学建模竞赛',desc:'缺一名会 Python 数据处理的同学，负责建模与绘图，赛前两周集中讨论，时间灵活。',name:'李四',time:'2026-11-08 14:20',status:'open',contact:'微信：lisi_mm2026',num:'2'},
+  {type:'b',title:'“互联网+”大学生创新创业大赛',desc:'本人擅长前端开发，想加入一个做校园二手交易方向的队伍，有项目经验优先联系。',name:'王五',time:'2026-11-07 09:12',status:'open',contact:'QQ：88991234',num:''},
+  {type:'a',title:'全国大学生电子设计竞赛',desc:'队伍已有 2 人（硬件方向），找 1 名嵌入式方向同学，要求会 STM32。',name:'赵六',time:'2026-11-05 18:40',status:'full',contact:'手机：138****5678',num:'1'}
+];
+var d3cur='all';
+var d3logged=false;
+var d3shown=[];
+function d3copy(i){
+  var text=d3shown[i].contact;
+  var m=document.getElementById('d3-msg');
+  function done(){m.className='msg ok';m.textContent='联系方式已复制到剪贴板：'+text;}
+  function fallback(){
+    var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');done();}
+    catch(e){m.className='msg err';m.textContent='复制失败，请手动复制';}
+    document.body.removeChild(ta);
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(fallback);
+  }else fallback();
+}
+function d3toggleRole(){
+  d3logged=!d3logged;
+  document.getElementById('d3-role').textContent=d3logged?'当前身份：已登录':'当前身份：游客';
+  var m=document.getElementById('d3-msg');
+  m.className='msg ok';
+  m.textContent=d3logged?'已登录，联系方式现在可见':'已切换为游客，联系方式将被遮罩';
+  d3render();
+}
+function d3needLogin(){
+  var m=document.getElementById('d3-msg');
+  m.className='msg err';
+  m.textContent='跳转登录页…（实际产品：登录成功后自动返回本详情页并展示联系方式）';
+}
+function d3filter(f){
+  d3cur=f;
+  ['all','a','b'].forEach(function(x){document.getElementById('d3-f-'+x).className=x===f?'active':'';});
+  d3render();
+}
+function d3render(){
+  var box=document.getElementById('d3-list');box.innerHTML='';
+  var list=d3posts.filter(function(p){return d3cur==='all'||p.type===d3cur;});
+  d3shown=list;
+  if(!list.length){box.innerHTML='<p class="note" style="text-align:center;padding:20px 0">暂无招募信息，来发布第一条吧</p>';return;}
+  list.forEach(function(p,i){
+    var typeTag=p.type==='a'?'<span class="tag type-a">找队友</span>':'<span class="tag type-b">找队伍</span>';
+    var stTag=p.status==='open'?'<span class="tag st-open">招募中</span>':'<span class="tag st-full">已招满</span>';
+    var div=document.createElement('div');
+    div.className='post-item';
+    div.innerHTML='<div class="t">'+typeTag+' '+p.title+' '+stTag+'</div>'+
+      '<div class="d">'+p.desc.slice(0,40)+'…</div>'+
+      '<div class="d">'+p.name+' · '+p.time+'</div>'+
+      '<div class="detail-box" id="d3-det-'+i+'">'+
+        (p.status==='full'?'<div style="color:var(--warn);margin-bottom:6px">该招募已完成，仅供参考</div>':'')+
+        '<div class="kv"><span class="k">描述</span><span>'+p.desc+'</span></div>'+
+        (p.num?'<div class="kv"><span class="k">需求人数</span><span>'+p.num+' 人</span></div>':'')+
+        '<div class="kv"><span class="k">联系方式</span><span>'+(d3logged?'<b>'+p.contact+'</b> <button class="btn small" onclick="event.stopPropagation();d3copy('+i+')">复制</button>':'<span class="note">已遮罩</span> <button class="btn small ghost" onclick="event.stopPropagation();d3needLogin()">登录后可查看联系方式</button>')+'</span></div>'+
+      '</div>';
+    div.onclick=function(){
+      var d=document.getElementById('d3-det-'+i);
+      d.style.display=d.style.display==='block'?'none':'block';
+    };
+    box.appendChild(div);
+  });
+}
+d3render();
+/* ---------- Demo 4: 用户管理 ---------- */
+var d4users=[
+  {sid:'20230001',name:'张三',posts:2,active:true},
+  {sid:'20230045',name:'李四',posts:1,active:true},
+  {sid:'20220102',name:'王五',posts:0,active:false}
+];
+function d4render(){
+  var b=document.getElementById('d4-body');b.innerHTML='';
+  d4users.forEach(function(u,i){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+u.sid+'</td><td>'+u.name+'</td><td>'+u.posts+'</td>'+
+      '<td>'+(u.active?'<span class="tag st-open">正常</span>':'<span class="tag st-ban">停用</span>')+'</td>'+
+      '<td></td>';
+    var btn=document.createElement('button');
+    btn.className='btn small '+(u.active?'danger':'ghost');
+    btn.textContent=u.active?'停用':'启用';
+    btn.onclick=function(){
+      if(u.active&&!confirm('停用后该用户将无法登录和发布，确认停用？'))return;
+      u.active=!u.active;d4render();
+    };
+    tr.cells[4].appendChild(btn);
+    b.appendChild(tr);
+  });
+}
+d4render();
+/* ---------- Demo 5: 帖子管理 ---------- */
+var d5posts=[
+  {type:'a',title:'全国大学生数学建模竞赛',name:'李四',time:'2026-11-08',status:'open'},
+  {type:'b',title:'“互联网+”大学生创新创业大赛',name:'王五',time:'2026-11-07',status:'open'},
+  {type:'a',title:'全国大学生电子设计竞赛',name:'赵六',time:'2026-11-05',status:'full'}
+];
+var d5cur='all';
+function d5filter(f){
+  d5cur=f;
+  ['all','a','b'].forEach(function(x){document.getElementById('d5-f-'+x).className=x===f?'active':'';});
+  d5render();
+}
+function d5render(){
+  var b=document.getElementById('d5-body');b.innerHTML='';
+  d5posts.filter(function(p){return d5cur==='all'||p.type===d5cur;}).forEach(function(p){
+    var tr=document.createElement('tr');
+    var typeTag=p.type==='a'?'<span class="tag type-a">找队友</span>':'<span class="tag type-b">找队伍</span>';
+    var stTag=p.status==='open'?'<span class="tag st-open">招募中</span>':
+              p.status==='full'?'<span class="tag st-full">已招满</span>':'<span class="tag st-down">已下架</span>';
+    tr.innerHTML='<td>'+typeTag+'</td><td>'+p.title+'</td><td>'+p.name+'</td><td>'+stTag+'</td><td></td>';
+    var td=tr.cells[4];
+    if(p.status!=='down'){
+      var btn=document.createElement('button');
+      btn.className='btn small danger';btn.textContent='下架';
+      btn.onclick=function(){
+        if(!confirm('下架后前台将不可见且不可恢复，确认下架？'))return;
+        p.status='down';d5render();
+      };
+      td.appendChild(btn);
+    }else{td.innerHTML='<span class="note">—</span>';}
+    b.appendChild(tr);
+  });
+}
+d5render();
+</script>
+</body>
+</html>

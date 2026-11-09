@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" fill="none">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eef2fb"/>
+      <stop offset="1" stop-color="#f8fafd"/>
+    </linearGradient>
+    <linearGradient id="hill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#dde7dd"/>
+      <stop offset="1" stop-color="#e9f0e8"/>
+    </linearGradient>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fbf8f1"/>
+      <stop offset="1" stop-color="#eee9df"/>
+    </linearGradient>
+    <linearGradient id="side" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ece7dc"/>
+      <stop offset="1" stop-color="#ddd7c9"/>
+    </linearGradient>
+    <linearGradient id="roof" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#cfc9d9"/>
+      <stop offset="1" stop-color="#b9b3c6"/>
+    </linearGradient>
+    <linearGradient id="tree" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a8c9b2"/>
+      <stop offset="1" stop-color="#7fae92"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e8efe6"/>
+      <stop offset="1" stop-color="#f4f7f1"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="900" height="520" fill="url(#sky)"/>
+  <circle cx="712" cy="96" r="42" fill="#fdf3e2"/>
+  <circle cx="712" cy="96" r="26" fill="#fbe8cd"/>
+
+  <!-- 远山 -->
+  <path d="M0 300c90-34 150-64 236-52 76 11 112 47 190 40 86-8 130-52 214-46 86 6 148 46 260 36v242H0Z" fill="url(#hill)" opacity=".7"/>
+
+  <!-- 树（后排） -->
+  <g opacity=".8">
+    <path d="M96 322c0-30 20-52 44-52s44 22 44 52Z" fill="#b9d3c2"/>
+    <rect x="136" y="318" width="8" height="34" rx="4" fill="#c2b7a4"/>
+    <path d="M792 318c0-26 18-46 40-46s40 20 40 46Z" fill="#b9d3c2"/>
+    <rect x="828" y="314" width="8" height="34" rx="4" fill="#c2b7a4"/>
+  </g>
+
+  <!-- 主楼 -->
+  <g>
+    <!-- 侧翼 -->
+    <path d="M104 372V236l96-26v162Z" fill="url(#side)"/>
+    <path d="M104 372V236l96-26v26l-96 24Z" fill="#e2dccf" opacity=".7"/>
+    <!-- 主立面 -->
+    <rect x="200" y="196" width="330" height="176" rx="4" fill="url(#wall)"/>
+    <!-- 屋顶 -->
+    <path d="M186 200 365 132l179 68Z" fill="url(#roof)"/>
+    <path d="M186 200h358v10H186Z" fill="#b3adc2"/>
+    <!-- 钟楼 -->
+    <rect x="342" y="96" width="46" height="100" rx="3" fill="#f6f2e9"/>
+    <path d="M334 100 365 74l31 26Z" fill="url(#roof)"/>
+    <circle cx="365" cy="132" r="13" fill="#fff"/>
+    <circle cx="365" cy="132" r="13" stroke="#c8c1d2" stroke-width="2"/>
+    <path d="M365 124v9l6 4" stroke="#8d8798" stroke-width="2" stroke-linecap="round"/>
+    <!-- 窗（两层） -->
+    <g fill="#cfd8e8">
+      <rect x="222" y="222" width="22" height="34" rx="3"/>
+      <rect x="262" y="222" width="22" height="34" rx="3"/>
+      <rect x="302" y="222" width="22" height="34" rx="3"/>
+      <rect x="406" y="222" width="22" height="34" rx="3"/>
+      <rect x="446" y="222" width="22" height="34" rx="3"/>
+      <rect x="486" y="222" width="22" height="34" rx="3"/>
+      <rect x="222" y="286" width="22" height="34" rx="3"/>
+      <rect x="262" y="286" width="22" height="34" rx="3"/>
+      <rect x="302" y="286" width="22" height="34" rx="3"/>
+      <rect x="406" y="286" width="22" height="34" rx="3"/>
+      <rect x="446" y="286" width="22" height="34" rx="3"/>
+      <rect x="486" y="286" width="22" height="34" rx="3"/>
+    </g>
+    <g fill="#e6ebf4">
+      <rect x="222" y="222" width="22" height="12" rx="3" opacity=".7"/>
+      <rect x="262" y="222" width="22" height="12" rx="3" opacity=".7"/>
+      <rect x="302" y="222" width="22" height="12" rx="3" opacity=".7"/>
+      <rect x="406" y="222" width="22" height="12" rx="3" opacity=".7"/>
+      <rect x="446" y="222" width="22" height="12" rx="3" opacity=".7"/>
+      <rect x="486" y="222" width="22" height="12" rx="3" opacity=".7"/>
+    </g>
+    <!-- 门廊 -->
+    <rect x="336" y="300" width="58" height="72" rx="4" fill="#dfe6f1"/>
+    <rect x="344" y="308" width="42" height="64" rx="3" fill="#c9d4e7"/>
+    <path d="M330 300h70v8h-70Z" fill="#e9edf5"/>
+    <!-- 台阶 -->
+    <path d="M322 372h86v8h-86Z" fill="#dcd6ca"/>
+    <path d="M314 380h102v8H314Z" fill="#d3ccbe"/>
+  </g>
+
+  <!-- 右翼 -->
+  <g>
+    <rect x="560" y="248" width="150" height="124" rx="3" fill="url(#wall)"/>
+    <path d="M552 250 635 214l83 36Z" fill="url(#roof)"/>
+    <g fill="#cfd8e8">
+      <rect x="580" y="276" width="20" height="30" rx="3"/>
+      <rect x="616" y="276" width="20" height="30" rx="3"/>
+      <rect x="652" y="276" width="20" height="30" rx="3"/>
+      <rect x="688" y="276" width="12" height="30" rx="3"/>
+      <rect x="580" y="326" width="20" height="30" rx="3"/>
+      <rect x="616" y="326" width="20" height="30" rx="3"/>
+      <rect x="652" y="326" width="20" height="30" rx="3"/>
+      <rect x="688" y="326" width="12" height="30" rx="3"/>
+    </g>
+  </g>
+
+  <!-- 地面 -->
+  <path d="M0 372h900v148H0Z" fill="url(#ground)"/>
+  <path d="M0 372h900v6H0Z" fill="#dfe8dc"/>
+
+  <!-- 松树 -->
+  <g>
+    <rect x="146" y="392" width="9" height="30" rx="4" fill="#b8ab97"/>
+    <path d="M150 366c14 0 26 12 26 26h-52c0-14 12-26 26-26Z" fill="url(#tree)"/>
+    <path d="M150 386c-17 0-30 14-30 30h60c0-16-13-30-30-30Z" fill="#96bfa6"/>
+    <rect x="742" y="392" width="9" height="30" rx="4" fill="#b8ab97"/>
+    <path d="M746 366c14 0 26 12 26 26h-52c0-14 12-26 26-26Z" fill="url(#tree)"/>
+    <path d="M746 386c-17 0-30 14-30 30h60c0-16-13-30-30-30Z" fill="#96bfa6"/>
+    <rect x="822" y="398" width="8" height="24" rx="4" fill="#b8ab97"/>
+    <path d="M826 376c12 0 22 10 22 22h-44c0-12 10-22 22-22Z" fill="#a9c9b5"/>
+  </g>
+
+  <!-- 步道 -->
+  <path d="M300 520c30-60 70-96 66-148h28c4 52 44 88 74 148Z" fill="#eef1ea"/>
+  <path d="M348 520c20-52 42-84 40-148h12c-2 64 20 96 40 148Z" fill="#f7f9f4" opacity=".7"/>
+
+  <!-- 云 -->
+  <g fill="#ffffff" opacity=".85">
+    <path d="M120 118c0-16 13-28 29-28 6-14 20-22 35-19 13 3 22 13 24 26 14 1 24 12 24 25H120Z"/>
+    <path d="M470 78c0-13 11-24 24-24 5-11 16-17 28-15 11 2 18 11 20 21 11 1 19 10 19 20H470Z" opacity=".7"/>
+  </g>
+</svg>

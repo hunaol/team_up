@@ -80,7 +80,8 @@ export async function copyText(text) {
 /** 旧帖子的纯文本描述 → 富文本 HTML（保留换行） */
 export function descToHtml(desc) {
   const raw = desc || ''
-  if (/<\/?(b|i|u|br)\b/i.test(raw)) return raw
+  // 含任意白名单标签（含图片）就按 HTML 原样输出，否则转义成纯文本
+  if (/<\/?(b|i|u|br|img)\b/i.test(raw)) return raw
   return raw
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')

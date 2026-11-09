@@ -28,27 +28,31 @@
   --line-strong: #e2e5ee;
 
   /* 主色（深藏蓝） */
-  --primary: #4e5579;
-  --primary-hover: #434a6b;
-  --primary-active: #393f5c;
-  --primary-soft: #eef0f7;
+  --primary: #4d5480;
+  --primary-hover: #424969;
+  --primary-active: #373c58;
+  --primary-soft: #eef0f9;
 
-  /* 强调色 */
-  --accent: #4a5bd4;
-  --accent-soft: #eef0fc;
-  --accent-line: #3b5bd0;
+  /* 强调色（青绿 → 青蓝） */
+  --accent: #0d9488;
+  --accent-hover: #0b7f75;
+  --accent-soft: #e6f7f5;
+  --accent-line: #14b8a6;
+  --teal: #14b8a6;
+  --violet: #8b5cf6;
+  --cyan: #06b6d4;
 
-  /* 语义色 */
-  --green: #2fae7c;
-  --green-soft: #e8f8f1;
-  --blue: #4b7bf0;
-  --blue-soft: #ecf2fe;
-  --red: #e2667f;
-  --red-soft: #fdeef1;
-  --orange: #f0a24a;
-  --orange-soft: #fef5e9;
-  --purple: #8b7bf0;
-  --purple-soft: #f1effe;
+  /* 语义色（更鲜明） */
+  --green: #10b981;
+  --green-soft: #e7f9f1;
+  --blue: #3b82f6;
+  --blue-soft: #eaf2ff;
+  --red: #f43f5e;
+  --red-soft: #ffecef;
+  --orange: #f59e0b;
+  --orange-soft: #fff5e6;
+  --purple: #8b5cf6;
+  --purple-soft: #f3eeff;
 
   /* 圆角 */
   --r-sm: 8px;
@@ -236,6 +240,7 @@ img {
   width: 100%;
   text-align: left;
   font-family: inherit;
+  position: relative;
 }
 
 .nav-item svg {
@@ -251,9 +256,20 @@ img {
 }
 
 .nav-item.active {
-  background: #edeff8;
-  color: #3d4a8f;
+  background: linear-gradient(90deg, #e6f7f5, #ecfaf8);
+  color: var(--accent);
   font-weight: 600;
+}
+
+.nav-item.active::before {
+  content: "";
+  position: absolute;
+  left: -9px;
+  top: 12px;
+  bottom: 12px;
+  width: 3px;
+  border-radius: 0 4px 4px 0;
+  background: linear-gradient(180deg, var(--teal), var(--cyan));
 }
 
 .nav-item.active svg {
@@ -714,24 +730,29 @@ img {
 }
 
 .stat-icon.blue {
-  background: var(--blue-soft);
-  color: var(--blue);
+  background: linear-gradient(135deg, #7cb0ff, #3b82f6);
+  color: #fff;
+  box-shadow: 0 10px 20px -12px rgba(59, 130, 246, 0.9);
 }
 .stat-icon.green {
-  background: var(--green-soft);
-  color: var(--green);
+  background: linear-gradient(135deg, #4ade80, #10b981);
+  color: #fff;
+  box-shadow: 0 10px 20px -12px rgba(16, 185, 129, 0.9);
 }
 .stat-icon.orange {
-  background: var(--orange-soft);
-  color: #e08f31;
+  background: linear-gradient(135deg, #fcc43c, #f59e0b);
+  color: #fff;
+  box-shadow: 0 10px 20px -12px rgba(245, 158, 11, 0.9);
 }
 .stat-icon.purple {
-  background: var(--purple-soft);
-  color: var(--purple);
+  background: linear-gradient(135deg, #b39bff, #8b5cf6);
+  color: #fff;
+  box-shadow: 0 10px 20px -12px rgba(139, 92, 246, 0.9);
 }
 .stat-icon.red {
-  background: var(--red-soft);
-  color: var(--red);
+  background: linear-gradient(135deg, #ff8fa3, #f43f5e);
+  color: #fff;
+  box-shadow: 0 10px 20px -12px rgba(244, 63, 94, 0.9);
 }
 
 .stat-main {
@@ -792,15 +813,15 @@ img {
 
 .pill-open {
   background: var(--green-soft);
-  color: #1d9c6c;
+  color: #0b9d6a;
 }
 .pill-full {
   background: var(--blue-soft);
-  color: #3a6ce0;
+  color: #2563eb;
 }
 .pill-down {
   background: var(--red-soft);
-  color: #d25671;
+  color: #e11d48;
 }
 .pill-expired {
   background: #f2f3f7;
@@ -812,7 +833,7 @@ img {
 }
 .pill-accent {
   background: var(--accent-soft);
-  color: #4352c4;
+  color: var(--accent);
 }
 
 /* ============================ 表单 ============================ */
@@ -969,10 +990,10 @@ img {
 }
 
 .chip.active {
-  background: var(--primary);
-  border-color: var(--primary);
+  background: linear-gradient(135deg, var(--teal), #0891b2);
+  border-color: transparent;
   color: #fff;
-  box-shadow: 0 8px 18px -12px rgba(78, 85, 121, 0.85);
+  box-shadow: 0 10px 20px -12px rgba(13, 148, 136, 0.95);
 }
 
 .chip.active svg {
@@ -1053,7 +1074,7 @@ img {
   bottom: -1px;
   height: 2px;
   border-radius: 2px;
-  background: var(--primary);
+  background: linear-gradient(90deg, var(--teal), var(--cyan));
 }
 
 .tab .tab-count {

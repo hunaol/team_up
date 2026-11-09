@@ -61,10 +61,10 @@ const cards = computed(() => {
 const donutItems = computed(() => {
   const dist = data.value?.status_distribution || {}
   return [
-    { label: '招募中', value: dist.open || 0, color: '#4a5bd4' },
-    { label: '已招满', value: dist.full || 0, color: '#2fae7c' },
-    { label: '已下架', value: dist.down || 0, color: '#f0a24a' },
-    { label: '已过期', value: dist.expired || 0, color: '#c9cedd' }
+    { label: '招募中', value: dist.open || 0, color: '#0d9488' },
+    { label: '已招满', value: dist.full || 0, color: '#3b82f6' },
+    { label: '已下架', value: dist.down || 0, color: '#f59e0b' },
+    { label: '已过期', value: dist.expired || 0, color: '#94a3b8' }
   ].filter((i) => i.value > 0)
 })
 
@@ -225,11 +225,11 @@ onMounted(load)
 }
 
 .dot1 {
-  background: #4a5bd4;
+  background: #14b8a6;
 }
 
 .dot2 {
-  background: #c3c9db;
+  background: #a78bfa;
 }
 
 .chart-body {

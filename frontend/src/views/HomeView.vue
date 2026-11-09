@@ -181,8 +181,12 @@ onMounted(async () => {
   gap: 24px;
   min-height: 246px;
   border-radius: var(--r-xl);
-  background: linear-gradient(115deg, #f4f6fc 0%, #eef2fa 46%, #f7f9fd 100%);
-  border: 1px solid #e9edf7;
+  background:
+    radial-gradient(660px 320px at 90% 10%, rgba(20, 184, 166, 0.2), transparent 62%),
+    radial-gradient(560px 280px at 2% 98%, rgba(6, 182, 212, 0.18), transparent 64%),
+    radial-gradient(420px 240px at 56% 108%, rgba(139, 92, 246, 0.12), transparent 60%),
+    linear-gradient(115deg, #f5fbfa 0%, #eef8f8 46%, #f6f5ff 100%);
+  border: 1px solid #e6eaf8;
   overflow: hidden;
   padding: 34px 40px;
   box-shadow: var(--shadow-sm);
@@ -209,12 +213,13 @@ onMounted(async () => {
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: #7d87a8;
-  background: rgba(255, 255, 255, 0.75);
-  border: 1px solid #e4e9f6;
+  color: var(--accent);
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid #e2e7fb;
   border-radius: 999px;
   padding: 4px 12px;
   margin-bottom: 14px;
+  font-weight: 600;
 }
 
 .hero-title {

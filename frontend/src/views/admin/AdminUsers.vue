@@ -458,8 +458,4 @@ onMounted(load)
   height: 34px;
   font-size: 12px;
 }
-
-.modal .field {
-  flex-direction: row;
-}
 </style>

@@ -8,6 +8,7 @@ import PostCard from '../components/PostCard.vue'
 
 const stats = ref(null)
 const posts = ref([])
+const rec = ref([])
 const loading = ref(true)
 
 const cards = computed(() => {
@@ -63,6 +64,14 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
+  if (auth.user) {
+    try {
+      const list = await api('/recommended?limit=6')
+      rec.value = list.filter((p) => (p.match?.score || 0) >= 45).slice(0, 3)
+    } catch (e) {
+      /* 资料不完整时没有推荐，忽略 */
+    }
+  }
 })
 </script>
 
@@ -98,6 +107,25 @@ onMounted(async () => {
           <div class="stat-label">{{ c.label }}</div>
           <div class="stat-value">{{ c.value }}</div>
         </div>
+      </div>
+    </section>
+
+    <section v-if="rec.length" class="section">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">
+            <AppIcon name="sparkles" :size="16" style="color: var(--accent); vertical-align: -2px" />
+            为你推荐
+          </h2>
+          <p class="section-desc">按你的技能、意向比赛与年级算出的匹配度</p>
+        </div>
+        <router-link to="/posts?sort=match" class="link-btn">
+          查看全部
+          <AppIcon name="arrowRight" :size="14" />
+        </router-link>
+      </div>
+      <div class="post-grid">
+        <PostCard v-for="p in rec" :key="p.id" :post="p" />
       </div>
     </section>
 

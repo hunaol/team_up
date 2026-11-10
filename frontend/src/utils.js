@@ -1,4 +1,53 @@
 export const TYPE_TEXT = { team: '找队友', join: '找队伍' }
+export const GRADE_TEXT = {
+  freshman: '大一',
+  sophomore: '大二',
+  junior: '大三',
+  senior: '大四',
+  graduate: '研究生'
+}
+export const ROLE_TEXT = {
+  frontend: '前端开发',
+  backend: '后端开发',
+  algorithm: '算法/建模',
+  data: '数据分析',
+  product: '产品/策划',
+  design: 'UI/视觉设计',
+  ppt: 'PPT/答辩',
+  writing: '文案/撰写',
+  video: '视频剪辑',
+  research: '市场调研',
+  finance: '财务/商业分析',
+  hardware: '硬件/嵌入式',
+  art: '美工/插画',
+  pm: '项目管理/队长',
+  ops: '运营/新媒体',
+  english: '英语/演讲'
+}
+export const STAGE_TEXT = {
+  forming: '刚组队',
+  school: '校赛冲刺',
+  province: '省赛备战',
+  national: '国赛备战'
+}
+export const STAGE_TONE = {
+  forming: 'stage-forming',
+  school: 'stage-school',
+  province: 'stage-province',
+  national: 'stage-national'
+}
+export const roleLabel = (code) => ROLE_TEXT[code] || code
+export const gradeLabel = (code) => GRADE_TEXT[code] || code
+export const stageLabel = (code) => STAGE_TEXT[code] || code
+
+/** 匹配度分档：高 / 中 / 低 */
+export function matchTone(score) {
+  if (score == null) return 'none'
+  if (score >= 75) return 'high'
+  if (score >= 50) return 'mid'
+  return 'low'
+}
+
 export const TYPE_DESC = {
   team: '我在组建队伍，寻找志同道合的队友',
   join: '我想加入一支队伍，一起参加比赛'
@@ -106,12 +155,14 @@ export function textToHtml(text) {
 }
 
 const GRADIENTS = [
-  ['#eef1fb', '#dfe5f6'],
-  ['#eefaf4', '#dcf1e6'],
-  ['#fdf4e9', '#f8e6cf'],
-  ['#f3effe', '#e7e0fa'],
-  ['#fdeef1', '#f8dde3'],
-  ['#eaf4fd', '#d9eafa']
+  ['#e8edfc', '#d3ddf7'],
+  ['#e6f8f0', '#cfeee0'],
+  ['#fdf1e3', '#f7dfc2'],
+  ['#f1ebfe', '#e0d5fa'],
+  ['#fdebed', '#f8d5db'],
+  ['#e6f3fd', '#cfe5fa'],
+  ['#f0f5e8', '#ddeaca'],
+  ['#fdeef8', '#f8d8ec']
 ]
 
 export function gradientOf(seed) {

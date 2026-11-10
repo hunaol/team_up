@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AppIcon from './AppIcon.vue'
 import UserAvatar from './UserAvatar.vue'
-import { auth, admin } from '../store'
+import { auth, admin, badge } from '../store'
 import { ok } from '../toast'
 
 const router = useRouter()
@@ -15,12 +15,12 @@ function onSearch() {
 }
 
 function onBell() {
-  ok('暂无新的通知')
+  router.push('/messages')
 }
 
 function onAvatar() {
   if (admin.logged) router.push('/admin')
-  else if (auth.user) router.push('/my')
+  else if (auth.user) router.push('/profile')
   else router.push('/login')
 }
 
@@ -35,9 +35,9 @@ const displayName = () => (admin.logged ? '平台管理员' : auth.user ? auth.u
     </form>
 
     <div class="topbar-actions">
-      <button class="icon-btn" title="通知" @click="onBell">
+      <button class="icon-btn" title="消息" @click="onBell">
         <AppIcon name="bell" />
-        <i class="dot" />
+        <i v-if="badge.unread" class="dot" />
       </button>
       <button class="icon-btn" title="我的账号" style="padding: 0" @click="onAvatar">
         <UserAvatar :name="displayName()" :size="34" />

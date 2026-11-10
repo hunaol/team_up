@@ -2,7 +2,16 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api, uploadImage } from '../api'
-import { CONTACT_PLACEHOLDER, CONTACT_TEXT, htmlToText, textToHtml, descToHtml } from '../utils'
+import {
+  CONTACT_PLACEHOLDER,
+  CONTACT_TEXT,
+  GRADE_TEXT,
+  ROLE_TEXT,
+  STAGE_TEXT,
+  htmlToText,
+  textToHtml,
+  descToHtml
+} from '../utils'
 import { err, ok } from '../toast'
 import PageHead from '../components/PageHead.vue'
 import AppIcon from '../components/AppIcon.vue'
@@ -22,7 +31,12 @@ const form = reactive({
   contact_type: 'wechat',
   contact: '',
   deadline: '',
-  image: ''
+  image: '',
+  competition: '',
+  roles: [],
+  grade_req: [],
+  major_req: '',
+  stage: ''
 })
 
 const errors = reactive({})
@@ -30,6 +44,8 @@ const saving = ref(false)
 const loading = ref(false)
 const uploading = ref(false)
 const coverInput = ref(null)
+const meta = ref({ competitions: [], majors: [] })
+const compFocused = ref(false)
 
 const titleLen = computed(() => form.title.trim().length)
 const descLen = computed(() => htmlToText(form.description).replace(/\s/g, '').length)
@@ -38,6 +54,39 @@ const TYPES = [
   { value: 'team', label: '找队友', desc: '我在组建队伍' },
   { value: 'join', label: '找队伍', desc: '我想加入队伍' }
 ]
+
+const ROLES = Object.entries(ROLE_TEXT).map(([code, label]) => ({ code, label }))
+const GRADES = Object.entries(GRADE_TEXT).map(([code, label]) => ({ code, label }))
+const STAGES = Object.entries(STAGE_TEXT).map(([code, label]) => ({ code, label }))
+
+const roleTitle = computed(() => (form.type === 'team' ? '缺什么位置' : '我能做什么'))
+const roleHint = computed(() =>
+  form.type === 'team'
+    ? '勾选需要队友补的位置，系统会据此推荐候选人'
+    : '勾选你擅长的能力，队长更容易通过匹配度找到你'
+)
+
+const compSuggestions = computed(() => {
+  const q = form.competition.trim().toLowerCase()
+  const all = meta.value.competitions || []
+  if (!q) return all.slice(0, 6)
+  const hit = all.filter(
+    (c) =>
+      c.name.toLowerCase().includes(q) ||
+      (c.aliases || []).some((a) => a.toLowerCase().includes(q))
+  )
+  return hit.slice(0, 8)
+})
+
+const compExact = computed(() =>
+  (meta.value.competitions || []).some((c) => c.name === form.competition)
+)
+
+function toggle(list, code) {
+  const i = list.indexOf(code)
+  if (i >= 0) list.splice(i, 1)
+  else list.push(code)
+}
 
 function validate() {
   Object.keys(errors).forEach((k) => delete errors[k])
@@ -94,7 +143,12 @@ async function submit() {
       contact_type: form.contact_type,
       contact: form.contact.trim(),
       deadline: form.deadline || null,
-      image: form.image || null
+      image: form.image || null,
+      competition: form.competition.trim() || null,
+      roles: form.roles,
+      grade_req: form.grade_req,
+      major_req: form.major_req || null,
+      stage: form.stage || null
     }
     if (isEdit.value) {
       delete payload.type
@@ -124,6 +178,11 @@ async function loadForEdit() {
     form.contact = p.contact || ''
     form.deadline = p.deadline || ''
     form.image = p.image || ''
+    form.competition = p.competition || ''
+    form.roles = p.roles || []
+    form.grade_req = p.grade_req || []
+    form.major_req = p.major_req || ''
+    form.stage = p.stage || ''
   } catch (e) {
     err(e.message)
     router.push('/my')
@@ -132,7 +191,12 @@ async function loadForEdit() {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  try {
+    meta.value = await api('/meta')
+  } catch (e) {
+    /* 名录拉不到也能自填 */
+  }
   if (isEdit.value) loadForEdit()
 })
 </script>
@@ -145,7 +209,7 @@ onMounted(() => {
         { label: isEdit ? '编辑招募' : '发布招募' }
       ]"
       :title="isEdit ? '编辑招募' : '发布招募'"
-      :desc="isEdit ? '更新你的招募信息，让更多同学看到' : '填写招募信息，让更多的队友看到你'"
+      :desc="isEdit ? '更新你的招募信息，让更多同学看到' : '填得越结构化，越容易被对的人搜到'"
     />
 
     <div v-if="loading" class="card card-pad">
@@ -180,6 +244,110 @@ onMounted(() => {
         </div>
 
         <div class="field">
+          <div class="field-label">参加的比赛<span class="opt">选填</span></div>
+          <div class="field-body">
+            <div class="comp-box">
+              <div class="comp-input">
+                <AppIcon name="flag" :size="15" />
+                <input
+                  v-model="form.competition"
+                  placeholder="搜比赛名或别名，如「正大杯」「市调」「美赛」"
+                  @focus="compFocused = true"
+                  @blur="compFocused = false"
+                />
+                <button
+                  v-if="form.competition"
+                  type="button"
+                  class="comp-clear"
+                  @click="form.competition = ''"
+                >
+                  <AppIcon name="close" :size="13" />
+                </button>
+              </div>
+              <div v-if="compFocused && !compExact && compSuggestions.length" class="comp-sug">
+                <button
+                  v-for="c in compSuggestions"
+                  :key="c.name"
+                  type="button"
+                  @mousedown.prevent="form.competition = c.name; compFocused = false"
+                >
+                  <span class="sug-name">{{ c.name }}</span>
+                  <span class="sug-meta">{{ c.level }}</span>
+                </button>
+              </div>
+            </div>
+            <div class="field-hint">
+              从名录里选可以避免「市调 / 正大杯」各写各的，别人按别名也能搜到你
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">比赛阶段<span class="opt">选填</span></div>
+          <div class="field-body">
+            <div class="chip-row">
+              <button
+                v-for="s in STAGES"
+                :key="s.code"
+                type="button"
+                class="chip chip-sm"
+                :class="{ active: form.stage === s.code }"
+                @click="form.stage = form.stage === s.code ? '' : s.code"
+              >
+                {{ s.label }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">{{ roleTitle }}<span class="opt">选填</span></div>
+          <div class="field-body">
+            <div class="chip-row">
+              <button
+                v-for="r in ROLES"
+                :key="r.code"
+                type="button"
+                class="chip chip-sm"
+                :class="{ active: form.roles.includes(r.code) }"
+                @click="toggle(form.roles, r.code)"
+              >
+                <AppIcon v-if="form.roles.includes(r.code)" name="check" :size="12" />
+                {{ r.label }}
+              </button>
+            </div>
+            <div class="field-hint">{{ roleHint }}</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">年级要求<span class="opt">选填</span></div>
+          <div class="field-body">
+            <div class="chip-row">
+              <button
+                v-for="g in GRADES"
+                :key="g.code"
+                type="button"
+                class="chip chip-sm"
+                :class="{ active: form.grade_req.includes(g.code) }"
+                @click="toggle(form.grade_req, g.code)"
+              >
+                {{ g.label }}
+              </button>
+            </div>
+            <div class="field-row" style="margin-top: 10px">
+              <input
+                v-model="form.major_req"
+                class="input"
+                placeholder="专业要求，如「经管类」，留空表示不限"
+                maxlength="40"
+              />
+            </div>
+            <div class="field-hint">不勾选年级表示不限；专业要求会作为匹配依据之一</div>
+          </div>
+        </div>
+
+        <div class="field">
           <div class="field-label">招募名称<span class="req">*</span></div>
           <div class="field-body">
             <input
@@ -187,7 +355,7 @@ onMounted(() => {
               class="input"
               :class="{ invalid: errors.title }"
               maxlength="50"
-              placeholder="请输入招募名称，如：全国大学生数学建模竞赛 队伍招募"
+              placeholder="请输入招募名称，如：正大杯市调 招募数据分析与答辩"
             />
             <div class="field-foot">
               <span v-if="errors.title" class="field-error">{{ errors.title }}</span>
@@ -315,6 +483,113 @@ onMounted(() => {
 .contact-type {
   width: 112px;
   flex: none;
+}
+
+.chip-sm {
+  height: 30px;
+  font-size: 12.5px;
+  padding: 0 12px;
+}
+
+/* 比赛选择 */
+.comp-box {
+  position: relative;
+}
+
+.comp-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: #fff;
+  transition: all 0.18s ease;
+}
+
+.comp-input:focus-within {
+  border-color: #b9c0da;
+  box-shadow: 0 0 0 4px rgba(78, 85, 121, 0.07);
+}
+
+.comp-input svg {
+  color: #a3aaba;
+  flex: none;
+}
+
+.comp-input input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text);
+}
+
+.comp-clear {
+  border: 0;
+  background: #f1f3f9;
+  color: #8a92a6;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex: none;
+}
+
+.comp-sug {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 20;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.comp-sug button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 13px;
+  border: 0;
+  border-bottom: 1px solid #f4f5f9;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.comp-sug button:last-child {
+  border-bottom: 0;
+}
+
+.comp-sug button:hover {
+  background: #f7f9fd;
+}
+
+.sug-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #262b3c;
+  flex: 1;
+}
+
+.sug-meta {
+  font-size: 11px;
+  color: var(--text-3);
 }
 
 .cover-box {

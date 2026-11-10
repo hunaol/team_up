@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppIcon from './AppIcon.vue'
 import UserAvatar from './UserAvatar.vue'
-import { auth, admin, logout, setAdminLogged } from '../store'
+import { auth, admin, badge, logout, setAdminLogged } from '../store'
 import { setAdminToken } from '../api'
 import { ok } from '../toast'
 
@@ -14,9 +14,12 @@ const menuOpen = ref(false)
 const userNav = [
   { to: '/', icon: 'home', label: '首页' },
   { to: '/posts', icon: 'compass', label: '招募广场' },
+  { to: '/competitions', icon: 'flag', label: '竞赛名录' },
   { to: '/publish', icon: 'megaphone', label: '发布招募' },
+  { to: '/messages', icon: 'chat', label: '消息', badge: true },
   { to: '/my', icon: 'file', label: '我的发布' },
-  { to: '/favorites', icon: 'bookmark', label: '我的收藏' }
+  { to: '/favorites', icon: 'bookmark', label: '我的收藏' },
+  { to: '/profile', icon: 'user', label: '我的资料' }
 ]
 
 const adminNav = [
@@ -80,6 +83,7 @@ async function onLogout() {
       >
         <AppIcon :name="item.icon" />
         <span>{{ item.label }}</span>
+        <span v-if="item.badge && badge.unread" class="nav-count">{{ badge.unread > 99 ? '99+' : badge.unread }}</span>
       </router-link>
     </nav>
 
@@ -113,6 +117,9 @@ async function onLogout() {
         </button>
 
         <div v-if="menuOpen" class="menu sidebar-menu">
+          <button @click="router.push('/profile'); menuOpen = false">
+            <AppIcon name="user" /> 我的资料
+          </button>
           <button @click="router.push('/my'); menuOpen = false">
             <AppIcon name="file" /> 我的发布
           </button>

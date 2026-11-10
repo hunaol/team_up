@@ -17,6 +17,17 @@ class User(Base):
     active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
 
+    # 个人资料（用于匹配与推送）
+    grade = Column(String(10), nullable=False, default="")  # freshman / sophomore / ...
+    major = Column(String(40), nullable=False, default="")
+    skills = Column(String(240), nullable=False, default="")  # 逗号分隔的角色 code
+    interests = Column(String(300), nullable=False, default="")  # 意向比赛（标准名，逗号分隔）
+    bio = Column(String(300), nullable=False, default="")
+    resume = Column(String(2000), nullable=False, default="")  # 简历正文
+    contact_type = Column(String(10), nullable=False, default="wechat")
+    contact = Column(String(100), nullable=False, default="")
+    open_to_match = Column(Boolean, nullable=False, default=True)
+
 
 class Post(Base):
     __tablename__ = "posts"
@@ -35,7 +46,48 @@ class Post(Base):
     views = Column(Integer, nullable=False, default=0)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
 
+    # 结构化字段：让帖子可被精确检索与匹配
+    competition = Column(String(80), nullable=False, default="", index=True)  # 比赛标准名
+    roles = Column(String(240), nullable=False, default="")  # team=缺什么位置 / join=我会什么
+    grade_req = Column(String(60), nullable=False, default="")  # 逗号分隔年级 code
+    major_req = Column(String(80), nullable=False, default="")
+    stage = Column(String(20), nullable=False, default="")  # forming/school/province/national
+
     author = relationship("User")
+
+
+class Application(Base):
+    """申请加入队伍：附带一句自荐 + 简历快照，队长可从中筛选。"""
+
+    __tablename__ = "applications"
+    __table_args__ = (UniqueConstraint("post_id", "user_id", name="uq_apply_post_user"),)
+
+    id = Column(Integer, primary_key=True)
+    post_id = Column(Integer, ForeignKey("posts.id"), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    message = Column(String(500), nullable=False, default="")
+    resume = Column(String(2000), nullable=False, default="")
+    match_score = Column(Integer, nullable=True)
+    status = Column(String(12), nullable=False, default="pending")  # pending/accepted/rejected
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+    applicant = relationship("User")
+    post = relationship("Post")
+
+
+class Message(Base):
+    """站内私信。thread = (user_lo, user_hi)。"""
+
+    __tablename__ = "messages"
+
+    id = Column(Integer, primary_key=True)
+    from_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    to_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    post_id = Column(Integer, nullable=True)
+    body = Column(String(1000), nullable=False)
+    is_read = Column(Boolean, nullable=False, default=False)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
 
 
 class Token(Base):

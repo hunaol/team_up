@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.pyc
+
+# 运行期日志与截图产物
+*.log
+.shots/
+.shots-mobile/
+.shots-view/
+
+# 用户上传
+backend/uploads/

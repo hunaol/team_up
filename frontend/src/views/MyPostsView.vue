@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../api'
-import { TYPE_TEXT, fmtDate, gradientOf, relTime } from '../utils'
+import { TYPE_TEXT, fmtDate, gradientOf, relTime, roleLabel } from '../utils'
 import { err, ok } from '../toast'
 import AppIcon from '../components/AppIcon.vue'
 import StatusPill from '../components/StatusPill.vue'
@@ -146,9 +146,9 @@ onMounted(load)
             <span
               v-else
               class="thumb-fallback"
-              :style="{ background: `linear-gradient(140deg, ${gradientOf(p.id + p.title)[0]}, ${gradientOf(p.id + p.title)[1]})` }"
+              :style="{ background: `linear-gradient(140deg, ${gradientOf(p.id)[0]}, ${gradientOf(p.id)[1]})` }"
             >
-              <AppIcon name="building" />
+              <AppIcon :name="p.type === 'team' ? 'users' : 'user'" />
             </span>
           </router-link>
 
@@ -158,6 +158,12 @@ onMounted(load)
               <StatusPill :status="p.status" />
               <span class="pill pill-accent">{{ TYPE_TEXT[p.type] }}</span>
             </router-link>
+            <div v-if="p.competition || (p.roles && p.roles.length)" class="row-comp">
+              <span v-if="p.competition" class="row-comp-name">
+                <AppIcon name="flag" :size="11" />{{ p.competition }}
+              </span>
+              <span v-for="r in (p.roles || []).slice(0, 3)" :key="r" class="tag">{{ roleLabel(r) }}</span>
+            </div>
             <p class="row-desc">{{ p.description_text || p.description }}</p>
             <div class="row-meta">
               <span><AppIcon name="users" :size="13" />需求 {{ p.need_num ? p.need_num + ' 人' : '不限' }}</span>

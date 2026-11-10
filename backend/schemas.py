@@ -104,6 +104,11 @@ class PostIn(BaseModel):
     contact: str = Field(min_length=5, max_length=100)
     deadline: Optional[str] = Field(default=None, pattern=DATE_PATTERN)
     image: Optional[str] = Field(default=None, max_length=200)
+    competition: Optional[str] = Field(default=None, max_length=80)
+    roles: list[str] = Field(default_factory=list, max_length=8)
+    grade_req: list[str] = Field(default_factory=list, max_length=6)
+    major_req: Optional[str] = Field(default=None, max_length=80)
+    stage: Optional[str] = Field(default=None, max_length=20)
 
     @model_validator(mode="after")
     def check_contact(self):
@@ -121,12 +126,46 @@ class PostUpdateIn(BaseModel):
     contact: Optional[str] = Field(default=None, min_length=5, max_length=100)
     deadline: Optional[str] = Field(default=None, pattern=DATE_PATTERN)
     image: Optional[str] = Field(default=None, max_length=200)
+    competition: Optional[str] = Field(default=None, max_length=80)
+    roles: Optional[list[str]] = Field(default=None, max_length=8)
+    grade_req: Optional[list[str]] = Field(default=None, max_length=6)
+    major_req: Optional[str] = Field(default=None, max_length=80)
+    stage: Optional[str] = Field(default=None, max_length=20)
 
     @model_validator(mode="after")
     def check_description(self):
         if self.description is not None:
             self.description = normalize_description(self.description)
         return self
+
+
+class ProfileIn(BaseModel):
+    grade: Optional[str] = Field(default=None, max_length=10)
+    major: Optional[str] = Field(default=None, max_length=40)
+    skills: Optional[list[str]] = Field(default=None, max_length=10)
+    interests: Optional[list[str]] = Field(default=None, max_length=12)
+    bio: Optional[str] = Field(default=None, max_length=300)
+    resume: Optional[str] = Field(default=None, max_length=2000)
+    contact_type: Optional[CONTACT_TYPES] = None
+    contact: Optional[str] = Field(default=None, max_length=100)
+    open_to_match: Optional[bool] = None
+
+    @model_validator(mode="after")
+    def check_contact(self):
+        if self.contact is not None:
+            self.contact = check_contact_format(self.contact_type or "wechat", self.contact)
+        return self
+
+
+class ApplyIn(BaseModel):
+    message: str = Field(default="", max_length=500)
+    resume: Optional[str] = Field(default=None, max_length=2000)
+
+
+class MessageIn(BaseModel):
+    to_id: int
+    body: str = Field(min_length=1, max_length=1000)
+    post_id: Optional[int] = None
 
 
 class UserUpdateIn(BaseModel):

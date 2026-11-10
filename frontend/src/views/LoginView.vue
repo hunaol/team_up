@@ -156,10 +156,6 @@ async function submit() {
           </button>
         </p>
 
-        <router-link to="/admin/login" class="auth-admin">
-          <AppIcon name="lock" :size="13" />
-          管理员入口
-        </router-link>
       </section>
     </div>
   </div>

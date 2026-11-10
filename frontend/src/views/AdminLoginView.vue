@@ -43,7 +43,8 @@ async function submit() {
     <div class="admin-card">
       <div class="admin-head">
         <span class="brand-mark">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round">
             <path d="M3.2 9.4 12 5.2l8.8 4.2L12 13.6 3.2 9.4Z" />
             <path d="M6.6 11.4v4.2c0 1.9 2.4 3.2 5.4 3.2s5.4-1.3 5.4-3.2v-4.2" />
             <path d="M20.8 9.6v4.6" />
@@ -67,13 +68,8 @@ async function submit() {
         <label class="auth-field">
           <span>密码</span>
           <div class="pwd-wrap">
-            <input
-              v-model="form.password"
-              class="input"
-              :type="showPwd ? 'text' : 'password'"
-              placeholder="请输入密码"
-              autocomplete="current-password"
-            />
+            <input v-model="form.password" class="input" :type="showPwd ? 'text' : 'password'" placeholder="请输入密码"
+              autocomplete="current-password" />
             <button type="button" class="pwd-eye" @click="showPwd = !showPwd">
               <AppIcon :name="showPwd ? 'eye' : 'lock'" :size="15" />
             </button>
@@ -87,7 +83,6 @@ async function submit() {
 
       <div class="admin-foot">
         <router-link to="/" class="link-btn">返回前台首页</router-link>
-        <span class="admin-hint">默认账号 admin / admin123</span>
       </div>
     </div>
   </div>
@@ -163,7 +158,7 @@ async function submit() {
   gap: 7px;
 }
 
-.auth-field > span {
+.auth-field>span {
   font-size: 12.5px;
   font-weight: 600;
   color: #4b5266;

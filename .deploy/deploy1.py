@@ -13,7 +13,9 @@ sftp = cli.open_sftp()
 LOCAL = r"E:\Project\trae_team"
 REMOTE = "/www/wwwroot/team.hunao.xin/server"
 files = ["main.py", "database.py", "models.py", "schemas.py", "auth.py",
-         "routes_user.py", "routes_post.py", "routes_admin.py", "routes_stats.py",
+         "matching.py", "competitions.py",
+         "routes_user.py", "routes_post.py", "routes_message.py", "routes_meta.py",
+         "routes_admin.py", "routes_stats.py",
          "requirements.txt", "run_tests.py", "_seed.py", "_clean.py"]
 for f in files:
     lp = os.path.join(LOCAL, "backend", f)

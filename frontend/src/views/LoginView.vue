@@ -2,7 +2,7 @@
 import { computed, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api, setToken } from '../api'
-import { setUser } from '../store'
+import { admin, setUser } from '../store'
 import { err, ok } from '../toast'
 import AppIcon from '../components/AppIcon.vue'
 
@@ -16,6 +16,13 @@ const busy = ref(false)
 
 const isLogin = computed(() => mode.value === 'login')
 const redirect = computed(() => (route.query.redirect ? String(route.query.redirect) : '/'))
+/** 管理员登录态下进到学生页：不是「没登录」，是「这个功能要学生身份」 */
+const adminOnly = computed(() => admin.logged && !localStorage.getItem('user'))
+
+function goBack() {
+  if (window.history.length > 1) router.back()
+  else router.push('/')
+}
 
 function switchMode(m) {
   mode.value = m
@@ -88,9 +95,22 @@ async function submit() {
       </section>
 
       <section class="auth-form">
+        <button class="auth-back" type="button" @click="goBack">
+          <AppIcon name="chevronLeft" :size="15" />
+          返回
+        </button>
+
         <div class="auth-tabs">
           <button class="auth-tab" :class="{ active: isLogin }" @click="switchMode('login')">登录</button>
           <button class="auth-tab" :class="{ active: !isLogin }" @click="switchMode('register')">注册</button>
+        </div>
+
+        <div v-if="adminOnly" class="auth-admin-note">
+          <AppIcon name="shield" :size="14" />
+          <span>
+            你已以<b>管理员</b>身份登录，当前页面是学生功能，需要学生账号。
+            <router-link to="/admin">回管理后台</router-link>
+          </span>
         </div>
 
         <h1 class="auth-title">{{ isLogin ? '欢迎回来' : '创建你的校园账号' }}</h1>
@@ -278,11 +298,63 @@ async function submit() {
 }
 
 .auth-form {
-  padding: 40px 42px;
+  padding: 58px 42px 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   position: relative;
+}
+
+.auth-back {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 10px 6px 6px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-3);
+  font-family: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: background 0.16s ease, color 0.16s ease;
+}
+
+.auth-back:hover {
+  background: #f3f4f9;
+  color: var(--primary);
+}
+
+.auth-admin-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: #0f6f66;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.auth-admin-note svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+.auth-admin-note b {
+  font-weight: 700;
+}
+
+.auth-admin-note a {
+  color: var(--accent-strong);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
 }
 
 .auth-tabs {
@@ -391,7 +463,7 @@ async function submit() {
     display: none;
   }
   .auth-form {
-    padding: 30px 26px 34px;
+    padding: 52px 26px 34px;
   }
 }
 </style>

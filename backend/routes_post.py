@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
-from auth import get_optional_user, require_user
+from auth import get_optional_user, is_admin_viewer, require_user
 from competitions import GRADE_LABEL, ROLE_LABEL, canonical_name
 from database import get_db
 from matching import score_for_candidate, score_for_my_team
@@ -231,6 +231,7 @@ def my_favorites(user: User = Depends(require_user), db: Session = Depends(get_d
 def get_post(
     post_id: int,
     user: Optional[User] = Depends(get_optional_user),
+    admin_viewer: bool = Depends(is_admin_viewer),
     db: Session = Depends(get_db),
 ):
     p = db.get(Post, post_id)
@@ -260,7 +261,14 @@ def get_post(
         if user
         else None
     )
-    data = post_out(p, user is not None, favorited, user, _viewer_team_post(db, user), applied)
+    data = post_out(
+        p,
+        user is not None or admin_viewer,
+        favorited,
+        user,
+        _viewer_team_post(db, user),
+        applied,
+    )
     data["author"] = _profile_payload(p.author)
     if user and user.id == p.user_id:
         data["applicant_count"] = (

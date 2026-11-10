@@ -99,6 +99,10 @@ async function onLogout() {
         <AppIcon :name="item.icon" />
         <span>{{ item.label }}</span>
       </router-link>
+      <router-link to="/" class="nav-item nav-back">
+        <AppIcon name="chevronLeft" />
+        <span>返回前台</span>
+      </router-link>
     </nav>
 
     <div class="sidebar-foot">
@@ -150,5 +154,15 @@ async function onLogout() {
   right: 6px;
   bottom: calc(100% - 6px);
   top: auto;
+}
+
+/* 返回前台不参与「当前页高亮」，颜色和后台导航区分 */
+.nav-back {
+  color: var(--accent-strong);
+}
+
+.nav-back:hover {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
 }
 </style>

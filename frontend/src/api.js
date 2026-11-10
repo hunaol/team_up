@@ -31,7 +31,10 @@ function detailToMessage(detail) {
 export async function api(path, { method = 'GET', body, token } = {}) {
   const headers = {}
   if (body !== undefined) headers['Content-Type'] = 'application/json'
-  const tk = token !== undefined ? token : getToken()
+  // 没登录学生账号时，只读请求带上管理员令牌：后端只把他当「只读查看者」，
+  // 学生身份相关的接口照样会拒绝（get_optional_user 只认非管理员令牌），
+  // 这样管理员审核内容时不会处处被要求登录。写操作不带，避免误用管理员身份。
+  const tk = token !== undefined ? token : getToken() || (method === 'GET' ? getAdminToken() : '')
   if (tk) headers['Authorization'] = 'Bearer ' + tk
 
   let res

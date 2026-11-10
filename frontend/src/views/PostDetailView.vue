@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../api'
-import { auth } from '../store'
+import { admin, auth } from '../store'
 import {
   CONTACT_TEXT,
   GRADE_TEXT,
@@ -46,6 +46,8 @@ const candidatesLoading = ref(false)
 const tab = ref('detail') // 详情 / 收到的申请（队长）/ 候选人
 
 const isOwner = computed(() => !!post.value && !!auth.user && post.value.author_id === auth.user.id)
+/** 只登录了管理员：可以看内容，但不能以学生身份申请/私信/收藏 */
+const adminViewer = computed(() => !!admin.logged && !auth.user)
 const isTeam = computed(() => post.value?.type === 'team')
 const left = computed(() => daysLeft(post.value?.deadline))
 const roles = computed(() => post.value?.roles || [])
@@ -108,6 +110,10 @@ async function toggleFavorite() {
   } finally {
     busy.value = false
   }
+}
+
+function toStudentLogin() {
+  router.push({ path: '/login', query: { redirect: route.fullPath } })
 }
 
 function openApply() {
@@ -437,10 +443,12 @@ onMounted(load)
             <span>发布于 {{ fmtDate(post.created_at) }}</span>
             <span>{{ post.views }} 次浏览</span>
           </div>
-          <p class="aside-note">联系方式仅登录用户可见，请文明沟通。</p>
+          <p class="aside-note">
+            {{ adminViewer ? '管理员审核可见，请勿外传学生联系方式。' : '联系方式仅登录用户可见，请文明沟通。' }}
+          </p>
         </section>
 
-        <section v-if="!isOwner" class="card aside-card">
+        <section v-if="!isOwner && !adminViewer" class="card aside-card">
           <template v-if="post.status === 'open'">
             <button v-if="!post.has_applied" class="btn btn-primary btn-block" @click="openApply">
               <AppIcon name="send" :size="15" />
@@ -459,6 +467,21 @@ onMounted(load)
             <AppIcon name="heart" :size="15" />
             {{ post.is_favorite ? '取消收藏' : '收藏这条招募' }}
           </button>
+        </section>
+
+        <section v-if="!isOwner && adminViewer" class="card aside-card admin-view-tip">
+          <div class="aside-label">管理员浏览模式</div>
+          <p>你可以查看全部内容与联系方式用于审核；申请、私信、收藏需要学生账号。</p>
+          <div class="admin-view-actions">
+            <router-link v-if="post.status === 'down' || post.status === 'expired'" to="/admin/posts" class="btn btn-ghost btn-sm">
+              <AppIcon name="list" :size="14" />
+              去招募管理
+            </router-link>
+            <router-link to="/login?redirect=" class="btn btn-ghost btn-sm" @click.prevent="toStudentLogin">
+              <AppIcon name="user" :size="14" />
+              用学生账号登录
+            </router-link>
+          </div>
         </section>
 
         <section class="card aside-card contact-card">
@@ -837,6 +860,20 @@ onMounted(load)
   font-size: 12px;
   color: var(--text-3);
   line-height: 1.7;
+}
+
+.admin-view-tip p {
+  font-size: 12.5px;
+  color: var(--text-3);
+  line-height: 1.7;
+  margin-top: 8px;
+}
+
+.admin-view-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
 }
 
 .aside-label {

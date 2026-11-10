@@ -65,3 +65,19 @@ def require_admin(
     if not row:
         raise HTTPException(status_code=401, detail="请先登录管理平台")
     return row
+
+
+def is_admin_viewer(
+    authorization: Optional[str] = Header(default=None),
+    db: Session = Depends(get_db),
+) -> bool:
+    """管理员以只读身份浏览前台时返回 True。
+
+    管理员审核内容时需要看到联系方式等信息，不该被「请先登录学生账号」挡住；
+    但管理员没有学生身份，不能发帖、申请、收藏、私信，所以这里只用于放宽读权限。
+    """
+    raw = _parse_bearer(authorization)
+    if not raw:
+        return False
+    row = db.query(Token).filter(Token.token == raw, Token.is_admin == True).first()  # noqa: E712
+    return row is not None
